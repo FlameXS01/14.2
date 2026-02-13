@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Nuestra historia · 14 de febrero</title>
     <!-- Fuentes bonitas -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +16,6 @@
         }
 
         body {
-            /* Fondo principal: ¡cambia 'fondo.png' por la ruta de tu imagen! */
             background-image: url('./fondo.jpg');
             background-size: cover;
             background-position: center;
@@ -27,14 +26,14 @@
             position: relative;
         }
 
-        /* Capa de corazones flotantes y glitter */
+        /* Capa de corazones flotantes */
         .floating-hearts {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* para que no interfiera con los clics */
+            pointer-events: none;
             z-index: 1;
         }
 
@@ -52,7 +51,7 @@
             100% { transform: translateY(-20vh) rotate(360deg); opacity: 0; }
         }
 
-        /* Efecto glitter (puntitos brillantes) */
+        /* Efecto glitter */
         .glitter {
             position: absolute;
             width: 100%;
@@ -90,15 +89,16 @@
             width: 100%;
             height: 90vh;
             max-width: 1200px;
-            padding: 20px;
-            gap: 30px;
+            padding: 20px 15px;  /* padding lateral para ver páginas vecinas */
+            gap: 15px;
             -webkit-overflow-scrolling: touch;
             scrollbar-width: thin;
             scrollbar-color: #ff99aa #ffe4e9;
+            scroll-padding: 0 15px; /* importante para que el snap respete el padding */
         }
 
         .pages-wrapper::-webkit-scrollbar {
-            height: 8px;
+            height: 6px;
         }
         .pages-wrapper::-webkit-scrollbar-track {
             background: #ffe4e9;
@@ -109,27 +109,31 @@
             border-radius: 10px;
         }
 
-        /* Cada página es como una tarjeta con efecto papel */
+        /* Cada página con efecto papel y transición suave */
         .page {
             scroll-snap-align: start;
-            flex: 0 0 85%;
+            flex: 0 0 85%;  /* en móvil ocupa el 85% para dejar ver los bordes */
             max-width: 380px;
-            background-color: rgba(255, 240, 245, 0.75); /* papel semitransparente */
+            background-color: rgba(255, 240, 245, 0.8);
             backdrop-filter: blur(3px);
             border-radius: 25px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 0 0 2px #ffb6c1 inset, 0 0 0 4px #fff0f5 inset;
             padding: 30px 25px;
             display: flex;
             flex-direction: column;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, filter 0.3s ease;
             border: 1px solid rgba(255, 255, 255, 0.7);
             font-family: 'Dancing Script', cursive;
             position: relative;
+            will-change: transform;
         }
 
-        .page:hover {
-            transform: scale(1.02);
-            box-shadow: 0 25px 50px rgba(255, 105, 135, 0.4);
+        /* Página activa: más grande, más brillante, con sombra especial */
+        .page.active {
+            transform: scale(1.05);
+            box-shadow: 0 30px 60px rgba(255, 80, 120, 0.5), 0 0 0 3px #ff99bb inset, 0 0 0 5px #fff0f5 inset;
+            z-index: 10;
+            background-color: rgba(255, 240, 245, 0.95);
         }
 
         /* Pequeña sombra de encuadernación */
@@ -145,7 +149,7 @@
             filter: blur(2px);
         }
 
-        /* Estilos para el texto */
+        /* Estilos de texto */
         h1 {
             font-size: 2.5rem;
             color: #b0305a;
@@ -178,7 +182,7 @@
             box-shadow: 0 4px 8px rgba(255, 150, 170, 0.2);
         }
 
-        /* Contenedores para las imágenes (placeholders) */
+        /* Contenedores de imagen: con estilo de placeholder por defecto */
         .image-placeholder {
             width: 100%;
             min-height: 170px;
@@ -198,23 +202,27 @@
             box-shadow: 0 5px 0 #ffb0bd;
         }
 
-        /* Para cuando el usuario ponga la imagen real */
+        /* Cuando tienen imagen, quitamos el fondo de placeholder */
         .image-placeholder img {
             width: 100%;
             height: auto;
-            border-radius: inherit;
+            border-radius: 30px 10px 30px 10px;
             display: block;
+            box-shadow: 0 5px 0 #ffb0bd;
         }
 
-        /* Variantes de posición (arriba/abajo) */
-        .page .image-top {
+        /* Clases de posición (por si quieres orden distinto) */
+        .image-top {
             order: -1;
         }
-        .page .image-bottom {
+        .image-bottom {
             order: 2;
         }
+        .image-center {
+            order: 0;
+        }
 
-        /* Puntos de navegación (opcional) */
+        /* Puntos de navegación */
         .dots {
             position: absolute;
             bottom: 25px;
@@ -224,6 +232,8 @@
             justify-content: center;
             gap: 12px;
             z-index: 20;
+            flex-wrap: wrap;
+            padding: 0 10px;
         }
         .dot {
             width: 12px;
@@ -233,94 +243,128 @@
             cursor: pointer;
             transition: all 0.3s;
             border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .dot.active {
             background-color: #d42b5c;
             transform: scale(1.3);
-            box-shadow: 0 0 10px #ff4d6d;
+            box-shadow: 0 0 15px #ff4d6d;
         }
 
-        /* Ajustes para pantallas pequeñas */
+        /* Ajustes responsivos para móvil */
         @media (max-width: 600px) {
             .page {
-                flex: 0 0 90%;
+                flex: 0 0 90%;  /* más ancho para que ocupe casi todo */
                 padding: 20px 15px;
             }
             h1 { font-size: 2rem; }
             h2 { font-size: 1.5rem; }
-            p { font-size: 1rem; }
-        }
-        /* Cuando el placeholder tiene la clase 'con-imagen', quitamos fondo y borde */
-        .image-placeholder.con-imagen {
-            background: none;
-            border: none;
-            box-shadow: none;
-            min-height: auto;
-            padding: 0;
+            p { font-size: 0.95rem; }
+            .pages-wrapper {
+                padding: 20px 10px;
+                gap: 10px;
+            }
+            .image-placeholder {
+                min-height: 140px;
+            }
         }
 
-        /* La imagen ocupará todo el ancho con la forma del placeholder */
-        .image-placeholder.con-imagen img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 30px 10px 30px 10px; /* misma forma que el placeholder */
-            box-shadow: 0 5px 0 #ffb0bd; /* sombra opcional */
+        /* Para pantallas muy pequeñas */
+        @media (max-width: 380px) {
+            .page {
+                flex: 0 0 95%;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Corazones flotantes (generados por JS) -->
+    <!-- Corazones flotantes -->
     <div class="floating-hearts" id="heartsContainer"></div>
     <div class="glitter"></div>
 
     <div class="book-container">
         <div class="pages-wrapper" id="pagesWrapper">
-            <!-- PÁGINA 1: PORTADA -->
-            <div class="page">
+            <!-- PÁGINA 1: PORTADA (sin imagen) -->
+            <div class="page" data-index="0">
                 <h1>Feliz 14 de febrero</h1>
                 <div style="text-align: center; margin: 20px 0;">
                     <span style="font-size: 4rem;">❤️</span>
                 </div>
-                <p style="text-align: center; font-style: italic;">Puti como no se hacer cajitas lindas te hice una websita linda para ti</p>
+                <p style="text-align: center; font-style: italic;">Puti, como no sé hacer cajitas lindas, te hice una websita linda para ti</p>
                 <p style="text-align: center; font-style: italic;">...</p>
                 <p style="text-align: center; font-style: italic;">Espero que sea lo suficientemente rosada y tenga bastantes corazones</p>
             </div>
 
-            <!-- PÁGINA 2: imagen arriba, texto abajo (imagen1) -->
-            <div class="page">
+            <!-- PÁGINA 2: imagen arriba -->
+            <div class="page" data-index="1">
                 <h2>Para mi putii ❤️</h2>
-                <div class="image-placeholder image-top con-imagen" id="imagen1">
-                    <img src="puti_loca.jpg" alt="Descripción">
+                <div class="image-placeholder image-top">
+                    <img src="puti_loca.jpg" alt="Puti loca">
                 </div>
             </div>
 
-            <!-- PÁGINA 3: texto arriba, imagen abajo (imagen2) -->
-            <div class="page">
+            <!-- PÁGINA 3: texto arriba, imagen abajo -->
+            <div class="page" data-index="2">
                 <h2>Momentos</h2>
                 <p>Cada instante a tu lado es un tesoro. Las risas, las dormidas eternas, los ronquiditos cómplices. No hay lugar en el mundo donde prefiera estar.</p>
-                <div class="image-placeholder image-bottom" id="imagen2"><img src="mimida2.jpg" alt="Descripción"></div>
+                <div class="image-placeholder image-bottom">
+                    <img src="mimida2.jpg" alt="Dormidos">
+                </div>
             </div>
 
-            <!-- PÁGINA 4: imagen arriba, texto abajo (imagen3) -->
-            <div class="page">
+            <!-- PÁGINA 4: imagen arriba, texto, imagen abajo (dos imágenes) -->
+            <div class="page" data-index="3">
                 <h2>Aventuras</h2>
-                <div class="image-placeholder image-top" id="imagen3"><img src="aven1.jpg" alt="Descripción"></div>
-                <p>Hemos recorrido caminos, descubierto rincones, pero mi lugar favorito siempre será tu abrazo. Gracias por ser mi compañera.</p>
-                <div class="image-placeholder image-bot" id="imagen3"><img src="avent3.jpg" alt="Descripción"></div>
+                <div class="image-placeholder image-top">
+                    <img src="aven1.jpg" alt="Aventura 1">
+                </div>
+                <p>Hemos recorrido caminos, descubierto rincones, pero mi lugar favorito siempre serás tú. Gracias por ser mi compañera.</p>
+                <div class="image-placeholder image-bottom">
+                    <img src="avent3.jpg" alt="Aventura 3">
+                </div>
             </div>
 
-            <!-- PÁGINA 5: texto arriba, imagen abajo (imagen4) -->
-            <div class="page">
-                <h2>Más de 500 días </h2>
+            <!-- PÁGINA 5: texto arriba, imagen abajo -->
+            <div class="page" data-index="4">
+                <h2>Más de 500 días</h2>
                 <p>Más de 500 días y aún cada momento me parece pequeño. Tus detalles, tu forma de quererme, me hacen sentir la persona más afortunada del mundo.</p>
-                <div class="image-placeholder image-bottom" id="imagen4"><img src="avent2.jpg" alt="Descripción"></div>
+                <div class="image-placeholder image-bottom">
+                    <img src="avent2.jpg" alt="Aventura 2">
+                </div>
             </div>
 
-            <!-- PÁGINA 6: imagen arriba, texto abajo (imagen5) -->
-            <div class="page">
-                <h2> Siempre nosotros</h2>
-                <div class="image-placeholder image-top" id="imagen5"><img src="verdes.jpg" alt="Descripción"></div>
+            <!-- PÁGINA 6: imagen centro, texto abajo -->
+            <div class="page" data-index="5">
+                <h2>Eres mi cosa favorita</h2>
+                <div class="image-placeholder image-center">
+                    <img src="dontcare.jpg" alt="Despreocupada">
+                </div>
+                <p>Sí, tú, así loquita y despreocupada, bonita y sencilla, que no me dices nada y me dices todo.</p>
+            </div>
+
+            <!-- PÁGINA 7: imagen arriba, texto abajo -->
+            <div class="page" data-index="6">
+                <h2>Amor con sabor a orejita</h2>
+                <div class="image-placeholder image-top">
+                    <img src="orejita.jpg" alt="Orejita">
+                </div>
+                <p>Tú me regañas por morderte, pero es que sabes tan rico que siempre tengo ganas de morderte. Pero también me gusta abrazarte y dormir contigo.</p>
+            </div>
+
+            <!-- PÁGINA 8: solo imagen centro -->
+            <div class="page" data-index="7">
+                <h2>Simple y profundamente tú</h2>
+                <div class="image-placeholder image-center">
+                    <img src="tu2.jpg" alt="Tú">
+                </div>
+            </div>
+
+            <!-- PÁGINA 9: imagen arriba, texto abajo -->
+            <div class="page" data-index="8">
+                <h2>Siempre nosotros</h2>
+                <div class="image-placeholder image-top">
+                    <img src="verdes.jpg" alt="Verdes">
+                </div>
                 <p>Y este 14 de febrero solo quiero recordarte que mi corazón late por ti. Que sigamos escribiendo juntos este cuento infinito. Te amo.</p>
             </div>
         </div>
@@ -333,24 +377,22 @@
         (function() {
             // Generar corazones flotantes
             const heartsContainer = document.getElementById('heartsContainer');
-            const heartCount = 25;
-            for (let i = 0; i < heartCount; i++) {
+            for (let i = 0; i < 25; i++) {
                 const heart = document.createElement('div');
                 heart.classList.add('heart');
                 heart.innerHTML = ['❤️', '🧡', '💖', '💗', '💓', '💕'][Math.floor(Math.random() * 6)];
                 heart.style.left = Math.random() * 100 + '%';
-                heart.style.animationDuration = (Math.random() * 5 + 4) + 's'; // entre 4 y 9 s
+                heart.style.animationDuration = (Math.random() * 5 + 4) + 's';
                 heart.style.animationDelay = (Math.random() * 5) + 's';
                 heart.style.fontSize = (Math.random() * 2 + 1) + 'rem';
                 heartsContainer.appendChild(heart);
             }
 
-            // Lógica para los puntos de navegación (sincronización con scroll)
             const wrapper = document.getElementById('pagesWrapper');
             const pages = document.querySelectorAll('.page');
             const dotsContainer = document.getElementById('dotsContainer');
-            
-            // Crear puntos según número de páginas
+
+            // Crear puntos de navegación
             pages.forEach((_, index) => {
                 const dot = document.createElement('span');
                 dot.classList.add('dot');
@@ -360,44 +402,59 @@
                 });
                 dotsContainer.appendChild(dot);
             });
-
             const dots = document.querySelectorAll('.dot');
 
-            // Actualizar punto activo al hacer scroll
-            function updateActiveDot() {
-                let indexActive = 0;
-                const scrollLeft = wrapper.scrollLeft;
-                const pageWidth = pages[0].offsetWidth + parseInt(getComputedStyle(wrapper).gap); // ancho + gap
-                // Estimación de la página visible (la más cercana al inicio)
-                const approxIndex = Math.round(scrollLeft / pageWidth);
-                if (approxIndex >= 0 && approxIndex < pages.length) {
-                    indexActive = approxIndex;
-                } else {
-                    // Si se sale de rango, por defecto 0
-                    indexActive = 0;
-                }
-                
-                dots.forEach((dot, i) => {
-                    dot.classList.toggle('active', i === indexActive);
+            // Función para determinar qué página está más cerca del centro y actualizar clase active y dots
+            function setActivePage() {
+                if (pages.length === 0) return;
+
+                const wrapperRect = wrapper.getBoundingClientRect();
+                const centerX = wrapperRect.left + wrapperRect.width / 2;
+
+                let closestIndex = 0;
+                let minDistance = Infinity;
+
+                pages.forEach((page, index) => {
+                    const rect = page.getBoundingClientRect();
+                    const pageCenter = rect.left + rect.width / 2;
+                    const distance = Math.abs(pageCenter - centerX);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        closestIndex = index;
+                    }
+                });
+
+                // Actualizar clase active en páginas
+                pages.forEach((page, index) => {
+                    if (index === closestIndex) {
+                        page.classList.add('active');
+                    } else {
+                        page.classList.remove('active');
+                    }
+                });
+
+                // Actualizar puntos activos
+                dots.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === closestIndex);
                 });
             }
 
+            // Llamar cada vez que se hace scroll
             wrapper.addEventListener('scroll', () => {
-                requestAnimationFrame(updateActiveDot);
+                requestAnimationFrame(setActivePage);
             });
 
-            // Inicializar primer punto activo
-            updateActiveDot();
+            // También al redimensionar la ventana
+            window.addEventListener('resize', () => {
+                requestAnimationFrame(setActivePage);
+            });
 
-            // Ajustar el scroll inicial (opcional)
-            // window.addEventListener('load', () => { wrapper.scrollLeft = 0; });
+            // Inicializar
+            setActivePage();
+
+            // Asegurar que la primera página esté activa al cargar (si no hay scroll)
+            // (setActivePage ya lo hace, pero por si acaso)
         })();
     </script>
-
-    <!-- Nota para el usuario: 
-         - Reemplaza cada div .image-placeholder (los que tienen texto "imagen1", etc.) por una etiqueta <img src="tufoto.jpg">.
-         - Puedes editar los textos de las frases en cada página.
-         - Si quieres más páginas, duplica una y ajusta el número.
-    -->
 </body>
 </html>
